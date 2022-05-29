@@ -46,7 +46,7 @@ jobs:
           GIT_USERNAME: github-actions-bot
           GIT_USEREMAIL: 47586723+aoshimash@users.noreply.github.com
         run: |
-          git config user.name ${GIT_USRENAME}
+          git config user.name ${GIT_USERNAME}
           git config user.email ${GIT_USEREMAIL}
           git add .
           git status
