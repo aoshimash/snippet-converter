@@ -25,9 +25,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/spf13/cobra"
+
 	"github.com/aoshimash/snippet-converter/internal/codesnippet"
 	"github.com/aoshimash/snippet-converter/internal/util"
-	"github.com/spf13/cobra"
 )
 
 // genvscodesnippetsCmd represents the genvscodesnippets command
