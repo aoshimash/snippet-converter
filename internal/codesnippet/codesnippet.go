@@ -9,15 +9,10 @@ import (
 	"strings"
 )
 
-type codeSnippetValue struct {
-	prefix, description string
-	body                []string
-}
-
 // ファイルの情報を格納する構造体
 type CodeSnippet struct {
-	key   string
-	value codeSnippetValue
+	key, prefix, description string
+	body                     []string
 }
 
 // ファイルの情報を取得
@@ -49,7 +44,7 @@ func NewCodeSnippet(path string) (CodeSnippet, error) {
 		} else if !header_end_flag {
 			// headerの終端であるか確認
 			if strings.HasPrefix(text, lang.commentEnd) {
-				if snippet.key == "" || snippet.value.prefix == "" || snippet.value.description == "" {
+				if snippet.key == "" || snippet.prefix == "" || snippet.description == "" {
 					// headerの終端まできてるのに、key, prefix, descriptionのいずれかが空の場合は空のCodeSnippetをリターンする
 					return CodeSnippet{}, ErrInsufficientHeader
 				}
@@ -59,17 +54,17 @@ func NewCodeSnippet(path string) (CodeSnippet, error) {
 			if strings.HasPrefix(text, "key:") {
 				snippet.key = strings.TrimPrefix(text, "key: ")
 			} else if strings.HasPrefix(text, "prefix:") {
-				snippet.value.prefix = strings.TrimPrefix(text, "prefix: ")
+				snippet.prefix = strings.TrimPrefix(text, "prefix: ")
 			} else if strings.HasPrefix(text, "description:") {
-				snippet.value.description = strings.TrimPrefix(text, "description: ")
+				snippet.description = strings.TrimPrefix(text, "description: ")
 			}
 		} else {
-			snippet.value.body = append(snippet.value.body, text)
+			snippet.body = append(snippet.body, text)
 		}
 	}
 
 	// bodyが空の場合は空CodeSnippetをリターン
-	if len(snippet.value.body) == 0 {
+	if len(snippet.body) == 0 {
 		return CodeSnippet{}, ErrEmptyBody
 	}
 
@@ -97,9 +92,9 @@ func GetVSCodeSnippetsJSON(snippets []CodeSnippet) ([]byte, error) {
 
 	for _, snippet := range snippets {
 		jsonMap[snippet.key] = map[string]interface{}{
-			"prefix":      snippet.value.prefix,
-			"body":        snippet.value.body,
-			"description": snippet.value.description,
+			"prefix":      snippet.prefix,
+			"body":        snippet.body,
+			"description": snippet.description,
 		}
 	}
 

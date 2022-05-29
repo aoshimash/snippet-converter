@@ -21,18 +21,16 @@ func TestNewCodeSnippet(t *testing.T) {
 			name: "success_cpp",
 			path: fixturesDir + "/cpp/success.cc",
 			expectedCodeSnippet: CodeSnippet{
-				key: "success",
-				value: codeSnippetValue{
-					prefix:      "success",
-					description: "success",
-					body: []string{
-						"#include <iostream>",
-						"",
-						"int main() {",
-						"  std::cout << \"success\" << std::endl;",
-						"  return;",
-						"}",
-					},
+				key:         "success",
+				prefix:      "success",
+				description: "success",
+				body: []string{
+					"#include <iostream>",
+					"",
+					"int main() {",
+					"  std::cout << \"success\" << std::endl;",
+					"  return;",
+					"}",
 				},
 			},
 			expectedErr: nil,
@@ -41,13 +39,11 @@ func TestNewCodeSnippet(t *testing.T) {
 			name: "success_python",
 			path: fixturesDir + "/python/success.py",
 			expectedCodeSnippet: CodeSnippet{
-				key: "success",
-				value: codeSnippetValue{
-					prefix:      "success",
-					description: "success",
-					body: []string{
-						"print(\"success\")",
-					},
+				key:         "success",
+				prefix:      "success",
+				description: "success",
+				body: []string{
+					"print(\"success\")",
 				},
 			},
 			expectedErr: nil,
@@ -84,9 +80,9 @@ func TestNewCodeSnippet(t *testing.T) {
 			assert.ErrorIs(t, err, tc.expectedErr)
 			if assert.NotNil(t, codeSnippet) {
 				assert.Equal(t, tc.expectedCodeSnippet.key, codeSnippet.key)
-				assert.Equal(t, tc.expectedCodeSnippet.value.prefix, codeSnippet.value.prefix)
-				assert.Equal(t, tc.expectedCodeSnippet.value.description, codeSnippet.value.description)
-				assert.Equal(t, tc.expectedCodeSnippet.value.body, codeSnippet.value.body)
+				assert.Equal(t, tc.expectedCodeSnippet.prefix, codeSnippet.prefix)
+				assert.Equal(t, tc.expectedCodeSnippet.description, codeSnippet.description)
+				assert.Equal(t, tc.expectedCodeSnippet.body, codeSnippet.body)
 			}
 		})
 	}
@@ -130,25 +126,21 @@ func TestGetVSCodeSnippetsJSON(t *testing.T) {
 			name: "read cpp files",
 			inputCodeSnippets: []CodeSnippet{
 				{
-					key: "key1",
-					value: codeSnippetValue{
-						prefix:      "prefix1",
-						description: "description1",
-						body: []string{
-							"body1_l1",
-							"body1_l2",
-						},
+					key:         "key1",
+					prefix:      "prefix1",
+					description: "description1",
+					body: []string{
+						"body1_l1",
+						"body1_l2",
 					},
 				},
 				{
-					key: "key2",
-					value: codeSnippetValue{
-						prefix:      "prefix2",
-						description: "description2",
-						body: []string{
-							"body2_l1",
-							"body2_l2",
-						},
+					key:         "key2",
+					prefix:      "prefix2",
+					description: "description2",
+					body: []string{
+						"body2_l1",
+						"body2_l2",
 					},
 				},
 			},
