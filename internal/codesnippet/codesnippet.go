@@ -16,18 +16,18 @@ type CodeSnippet struct {
 }
 
 // ファイルの情報を取得
-func NewCodeSnippet(path string) (CodeSnippet, error) {
-	snippet := CodeSnippet{}
+func NewCodeSnippet(path string) (*CodeSnippet, error) {
+	snippet := &CodeSnippet{}
 
 	data, err := os.Open(path)
 	defer data.Close()
 	if err != nil {
-		return CodeSnippet{}, err
+		return nil, err
 	}
 
 	lang, err := getProgrammingLang(path)
 	if err != nil {
-		return CodeSnippet{}, err
+		return nil, err
 	}
 
 	header_start_flag := false
@@ -46,7 +46,7 @@ func NewCodeSnippet(path string) (CodeSnippet, error) {
 			if strings.HasPrefix(text, lang.commentEnd) {
 				if snippet.key == "" || snippet.prefix == "" || snippet.description == "" {
 					// headerの終端まできてるのに、key, prefix, descriptionのいずれかが空の場合は空のCodeSnippetをリターンする
-					return CodeSnippet{}, ErrInsufficientHeader
+					return nil, ErrInsufficientHeader
 				}
 				header_end_flag = true
 			}
@@ -65,14 +65,14 @@ func NewCodeSnippet(path string) (CodeSnippet, error) {
 
 	// bodyが空の場合は空CodeSnippetをリターン
 	if len(snippet.body) == 0 {
-		return CodeSnippet{}, ErrEmptyBody
+		return nil, ErrEmptyBody
 	}
 
 	return snippet, err
 }
 
-func NewCodeSnippets(filePathes []string) []CodeSnippet {
-	snippets := []CodeSnippet{}
+func NewCodeSnippets(filePathes []string) []*CodeSnippet {
+	snippets := []*CodeSnippet{}
 
 	for _, filePath := range filePathes {
 		snippet, err := NewCodeSnippet(filePath)
@@ -87,7 +87,7 @@ func NewCodeSnippets(filePathes []string) []CodeSnippet {
 	return snippets
 }
 
-func GetVSCodeSnippetsJSON(snippets []CodeSnippet) ([]byte, error) {
+func GetVSCodeSnippetsJSON(snippets []*CodeSnippet) ([]byte, error) {
 	jsonMap := map[string]interface{}{}
 
 	for _, snippet := range snippets {

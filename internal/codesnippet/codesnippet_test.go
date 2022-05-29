@@ -14,13 +14,13 @@ func TestNewCodeSnippet(t *testing.T) {
 	testCases := []struct {
 		name                string
 		path                string
-		expectedCodeSnippet CodeSnippet
+		expectedCodeSnippet *CodeSnippet
 		expectedErr         error
 	}{
 		{
 			name: "success_cpp",
 			path: fixturesDir + "/cpp/success.cc",
-			expectedCodeSnippet: CodeSnippet{
+			expectedCodeSnippet: &CodeSnippet{
 				key:         "success",
 				prefix:      "success",
 				description: "success",
@@ -38,7 +38,7 @@ func TestNewCodeSnippet(t *testing.T) {
 		{
 			name: "success_python",
 			path: fixturesDir + "/python/success.py",
-			expectedCodeSnippet: CodeSnippet{
+			expectedCodeSnippet: &CodeSnippet{
 				key:         "success",
 				prefix:      "success",
 				description: "success",
@@ -51,25 +51,25 @@ func TestNewCodeSnippet(t *testing.T) {
 		{
 			name:                "no such file",
 			path:                "fail_file_path",
-			expectedCodeSnippet: CodeSnippet{},
+			expectedCodeSnippet: nil,
 			expectedErr:         fs.ErrNotExist,
 		},
 		{
 			name:                "insufficient header",
 			path:                fixturesDir + "/cpp/error_insufficient_header.cc",
-			expectedCodeSnippet: CodeSnippet{},
+			expectedCodeSnippet: nil,
 			expectedErr:         ErrInsufficientHeader,
 		},
 		{
 			name:                "empty body",
 			path:                fixturesDir + "/cpp/error_empty_body.cc",
-			expectedCodeSnippet: CodeSnippet{},
+			expectedCodeSnippet: nil,
 			expectedErr:         ErrEmptyBody,
 		},
 		{
 			name:                "unsupported file",
 			path:                fixturesDir + "/unsupported/unsupported.aaa",
-			expectedCodeSnippet: CodeSnippet{},
+			expectedCodeSnippet: nil,
 			expectedErr:         ErrUnsupportedFileExtension,
 		},
 	}
@@ -78,7 +78,7 @@ func TestNewCodeSnippet(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			codeSnippet, err := NewCodeSnippet(tc.path)
 			assert.ErrorIs(t, err, tc.expectedErr)
-			if assert.NotNil(t, codeSnippet) {
+			if codeSnippet != nil {
 				assert.Equal(t, tc.expectedCodeSnippet.key, codeSnippet.key)
 				assert.Equal(t, tc.expectedCodeSnippet.prefix, codeSnippet.prefix)
 				assert.Equal(t, tc.expectedCodeSnippet.description, codeSnippet.description)
@@ -119,12 +119,12 @@ func TestNewCodeSnippets(t *testing.T) {
 func TestGetVSCodeSnippetsJSON(t *testing.T) {
 	testCases := []struct {
 		name              string
-		inputCodeSnippets []CodeSnippet
+		inputCodeSnippets []*CodeSnippet
 		expectedJSONMap   map[string]interface{}
 	}{
 		{
 			name: "read cpp files",
-			inputCodeSnippets: []CodeSnippet{
+			inputCodeSnippets: []*CodeSnippet{
 				{
 					key:         "key1",
 					prefix:      "prefix1",
