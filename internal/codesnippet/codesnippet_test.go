@@ -70,6 +70,12 @@ func TestNewCodeSnippet(t *testing.T) {
 			expectedCodeSnippet: CodeSnippet{},
 			expectedErr:         ErrEmptyBody,
 		},
+		{
+			name:                "unsupported file",
+			path:                fixturesDir + "/unsupported/unsupported.aaa",
+			expectedCodeSnippet: CodeSnippet{},
+			expectedErr:         ErrUnsupportedFileExtension,
+		},
 	}
 
 	for _, tc := range testCases {

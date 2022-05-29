@@ -9,23 +9,6 @@ import (
 	"strings"
 )
 
-var (
-	headers = []map[string]string{
-		{"start": "/*", "end": "*/"},           // c, cpp, java, go, scala, groovy, php, javascript, css
-		{"start": "'''", "end": "'''"},         // python
-		{"start": "<<HEADER", "end": "HEADER"}, // bash
-		{"start": "{-", "end": "-}"},           // Haskell
-		{"start": "<!--", "end": "-->"},        // html
-		{"start": "###", "end": "###"},         // etc
-		{"start": "///", "end": "///"},         // etc
-	}
-)
-
-var (
-	ErrInsufficientHeader = errors.New("Insufficient Header Information")
-	ErrEmptyBody          = errors.New("Body is empty")
-)
-
 type codeSnippetValue struct {
 	prefix, description string
 	body                []string
@@ -43,7 +26,11 @@ func NewCodeSnippet(path string) (CodeSnippet, error) {
 
 	data, err := os.Open(path)
 	defer data.Close()
+	if err != nil {
+		return CodeSnippet{}, err
+	}
 
+	lang, err := getProgrammingLang(path)
 	if err != nil {
 		return CodeSnippet{}, err
 	}
@@ -56,23 +43,17 @@ func NewCodeSnippet(path string) (CodeSnippet, error) {
 	for scanner.Scan() {
 		text := scanner.Text()
 		if !header_start_flag {
-			for _, headerComment := range headers {
-				if strings.HasPrefix(text, headerComment["start"]) {
-					header_start_flag = true
-					break
-				}
+			if strings.HasPrefix(text, lang.commentStart) {
+				header_start_flag = true
 			}
 		} else if !header_end_flag {
 			// headerの終端であるか確認
-			for _, headerComment := range headers {
-				if strings.HasPrefix(text, headerComment["end"]) {
-					if snippet.key == "" || snippet.value.prefix == "" || snippet.value.description == "" {
-						// headerの終端まできてるのに、key, prefix, descriptionのいずれかが空の場合は空のCodeSnippetをリターンする
-						return CodeSnippet{}, ErrInsufficientHeader
-					}
-					header_end_flag = true
-					break
+			if strings.HasPrefix(text, lang.commentEnd) {
+				if snippet.key == "" || snippet.value.prefix == "" || snippet.value.description == "" {
+					// headerの終端まできてるのに、key, prefix, descriptionのいずれかが空の場合は空のCodeSnippetをリターンする
+					return CodeSnippet{}, ErrInsufficientHeader
 				}
+				header_end_flag = true
 			}
 			//
 			if strings.HasPrefix(text, "key:") {
