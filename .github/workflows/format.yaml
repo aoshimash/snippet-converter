@@ -41,7 +41,7 @@ jobs:
         continue-on-error: true
 
       - name: git commit and git push
-        if: steps.git_diff.outcome == "failure"
+        if: steps.git_diff.outcome == 'failure'
         env:
           GIT_USERNAME: github-actions-bot
           GIT_USEREMAIL: 47586723+aoshimash@users.noreply.github.com
