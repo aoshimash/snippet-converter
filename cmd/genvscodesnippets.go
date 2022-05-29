@@ -22,8 +22,12 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	"log"
 
+	"github.com/aoshimash/snippet-converter/internal/codesnippet"
+	"github.com/aoshimash/snippet-converter/internal/util"
 	"github.com/spf13/cobra"
 )
 
@@ -32,8 +36,14 @@ var genvscodesnippetsCmd = &cobra.Command{
 	Use:   "genvscodesnippets",
 	Short: "Generate a JSON string for Visual Studio Code Snippets",
 	Long:  `Generate a JSON string for Visual Studio Code Snippets from comments in source codes.`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return errors.New("requires a single argument")
+		}
+		return nil
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("genvscodesnippets called")
+		genvscodesnippets(args[0])
 	},
 }
 
@@ -49,4 +59,26 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// genvscodesnippetsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func genvscodesnippets(targetDir string) {
+	// get all file pathes
+	filePathes, err := util.GetFilePathes(targetDir)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
+	// create slice of CodeSnipet objects from file data
+	snippets := codesnippet.NewCodeSnippets(filePathes)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
+	// get json
+	bytes, err := codesnippet.GetVSCodeSnippetsJSON(snippets)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
+	fmt.Println(string(bytes))
 }
