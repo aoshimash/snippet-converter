@@ -31,32 +31,32 @@ import (
 	"github.com/aoshimash/snippet-converter/internal/util"
 )
 
-// genvscodesnippetsCmd represents the genvscodesnippets command
-var genvscodesnippetsCmd = &cobra.Command{
-	Use:   "genvscodesnippets [PATH]",
+// vscodeCmd represents the vscode command
+var vscodeCmd = &cobra.Command{
+	Use:   "vscode [PATH]",
 	Short: "Generate a JSON string for Visual Studio Code Snippets",
 	Long:  `Generate a JSON string for Visual Studio Code Snippets from comments in source codes.`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		genvscodesnippets(args[0])
+		vscode(args[0])
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(genvscodesnippetsCmd)
+	rootCmd.AddCommand(vscodeCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// genvscodesnippetsCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// vscodeCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// genvscodesnippetsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// vscodeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func genvscodesnippets(targetDir string) {
+func vscode(targetDir string) {
 	// get all file pathes
 	filePathes, err := util.GetFilePathes(targetDir)
 	if err != nil {
