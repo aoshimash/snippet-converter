@@ -22,7 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"log"
 
@@ -33,15 +32,10 @@ import (
 
 // genvscodesnippetsCmd represents the genvscodesnippets command
 var genvscodesnippetsCmd = &cobra.Command{
-	Use:   "genvscodesnippets",
+	Use:   "genvscodesnippets [PATH]",
 	Short: "Generate a JSON string for Visual Studio Code Snippets",
 	Long:  `Generate a JSON string for Visual Studio Code Snippets from comments in source codes.`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return errors.New("requires a single argument")
-		}
-		return nil
-	},
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		genvscodesnippets(args[0])
 	},
