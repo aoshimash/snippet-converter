@@ -3,11 +3,6 @@ name: test
 
 on:
   push:
-    paths:
-      - cmd/**
-      - internal/**
-      - main.go
-      - .github/workflows/format.yaml
 
 jobs:
   format:
